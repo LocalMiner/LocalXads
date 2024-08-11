@@ -1,21 +1,40 @@
 <!DOCTYPE HTML>
 <html lang="en-US">
-    <head>
-        <meta charset="UTF-8">
-        <script type="text/javascript">
-            //https://localhost:5500/paywall.html?pa=sigmachad@ibl&am=1500&ms=PaywallDonation
-            const params = new URLSearchParams(document.location.search);
-            var amount = params.get("am");
-            var message = params.get("ms");
-            var upi_id = params.get("pa");
-            var upilink = `upi://pay?pa=${upi_id}&pn=Healer&tn=${message}&am=${amount}`
+
+<head>
+    <meta charset="UTF-8">
+    <title>Upi PayWall</title>
+</head>
+
+<body >
+    <!-- Note: don't tell people to `click` the link, just tell them that it is a link. -->
+    <div id="root1"></div>
+    <script type="text/javascript">
+        //https://localhost:5500/paywall.html?pa=sigmachad@ibl&am=1500&ms=PaywallDonation
+        const params = new URLSearchParams(document.location.search);
+        var amount = params.get("am");
+        var message = params.get("ms");
+        var upi_id = params.get("pa");
+        var upilink = `upi://pay?pa=${upi_id}&pn=Healer&tn=${message}&am=${amount}`
+        let root = document.getElementById("root1")
+
+        function isMobile() {
+            const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+            return regex.test(navigator.userAgent);
+        }
+
+        if (isMobile()) {
+            console.log("Mobile device detected");
+            root.innerHTML = `If you are not redirected automatically, follow this <a id="link"
+        href='upi://pay?pa=sigmachad@ibl&pn=Healer&tn=LocalMinerDonation&am=99'>link to example</a>.`
             window.location.href = upilink
             document.getElementById("link").href = upilink
-        </script>
-        <title>Upi PayWall</title>
-    </head>
-    <body>
-        <!-- Note: don't tell people to `click` the link, just tell them that it is a link. -->
-        If you are not redirected automatically, follow this <a id="link" href='upi://pay?pa=sigmachad@ibl&pn=Healer&tn=LocalMinerDonation&am=99'>link to example</a>.
-    </body>
+
+        } else {
+            console.log("Desktop device detected");
+            root.innerHTML = `<center><H1><i>This Payment Page Works Best on Mobile Devices</i></H1><i><p>Payment is for <b>${message}</b> to <b>${upi_id}</b></p></i><img src="https://cdn.discordapp.com/attachments/1058239742434619454/1271374132549914666/image.png?ex=66b9bdee&is=66b86c6e&hm=7cbeac418fee7a28420cc1c1914c44f36dc0ac1b52512ea490508da1b7654b01&" width="50%"><i><p>You Can Scan this qr code and pay a sum of <b>${amount}₹</b></p></i></center>`
+        }
+    </script>
+</body>
+
 </html>
