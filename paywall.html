@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8">
+        <script type="text/javascript">
+            //https://localhost:5500/paywall.html?oa=sigmachad@ibl&am=1500&ms=PaywallDonation
+            const params = new URLSearchParams(document.location.search);
+            var amount = params.get("am");
+            var message = params.get("ms");
+            var upi_id = params.get("pa");
+            var upilink = `upi://pay?pa=${upi_id}&pn=Healer&tn=${message}&am=${amount}`
+            window.location.href = upilink
+            document.getElementById("link").href = upilink
+        </script>
+        <title>Upi PayWall</title>
+    </head>
+    <body>
+        <!-- Note: don't tell people to `click` the link, just tell them that it is a link. -->
+        If you are not redirected automatically, follow this <a id="link" href='upi://pay?pa=sigmachad@ibl&pn=Healer&tn=LocalMinerDonation&am=99'>link to example</a>.
+    </body>
+</html>
