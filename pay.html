@@ -4,35 +4,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Upi PayWall</title>
+    <style>
+        button{
+            padding:10px;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+
+        }
+        button:hover{
+            background-color: rgb(27, 225, 50);
+            color:white;
+        }
+    </style>
 </head>
 
-<body >
-    <!-- Note: don't tell people to `click` the link, just tell them that it is a link. -->
-    <div id="root1"></div>
+<body>
+    <center>
+        <H1><i>LocalX Payment Page!</i></H1><i>
+            <p>Payment is for <b id="message">${message}</b></p>
+        </i><img id="qrupi"
+            src="https://upiqr.in/api/qr/?name=Healer&vpa=sigmachad@ibl&amount=150&note=Paywall&format=png"
+            width="25%"><i>
+            <p>Scan using any upi app</p>
+        </i><br>
+        <button onclick="upi()">Click if your are on mobile</button>
+        <h4>You can also pay using <a href="https://paypal.me/stfuadi?country.x=IN&locale.x=en_GB">Paypal</a> and amount of ₹<b id="mo">amount</b></h4>
+    </center>
     <script type="text/javascript">
-        //upi://pay?pa=sigmachad@ibl&pn=Healer&tn=LocalMinerDonation&am=99
+        //https://localhost:5500/paywall.html?pa=sigmachad@ibl&am=1500&ms=PaywallDonation
         var amount = 99;
         var message = "LocalMinerDonation";
         var upi_id = "sigmachad@ibl";
         var upilink = `upi://pay?pa=${upi_id}&pn=Healer&tn=${message}&am=${amount}`
-        let root = document.getElementById("root1")
-
-        function isMobile() {
-            const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
-            return regex.test(navigator.userAgent);
-        }
-
-        if (isMobile()) {
-            console.log("Mobile device detected");
-            root.innerHTML = `If you are not redirected automatically, follow this <a id="link"
-        href='upi://pay?pa=sigmachad@ibl&pn=Healer&tn=LocalMinerDonation&am=99'>link to example</a>.`
+        var qrlink = `https://upiqr.in/api/qr/?name=Healer&vpa=${upi_id}&amount=${amount}&note=${message}&format=png`
+        
+        document.getElementById("message").innerText=message
+        document.getElementById("qrupi").src = qrlink
+        document.getElementById("mo").innerHTML = amount
+        
+        function upi(){
             window.location.href = upilink
-            document.getElementById("link").href = upilink
-
-        } else {
-            console.log("Desktop device detected");
-           root.innerHTML = `<center><H1><i>This Payment Page Works Best on Mobile Devices</i></H1><i><p>Payment is for <b>${message}</b> to <b>${upi_id}</b></p></i><img src="https://cdn.discordapp.com/attachments/1058239742434619454/1271374132549914666/image.png?ex=66b9bdee&is=66b86c6e&hm=7cbeac418fee7a28420cc1c1914c44f36dc0ac1b52512ea490508da1b7654b01&" width="50%"><i><p>You Can Scan this qr code and pay a sum of <b>${amount}₹</b></p></i><br><h4>You can also pay using <a href="https://paypal.me/stfuadi?country.x=IN&locale.x=en_GB">Paypal</a></h4></center>`
         }
+
     </script>
 </body>
 
+</html>
