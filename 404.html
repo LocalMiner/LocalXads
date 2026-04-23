@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOCALM | 404 - Lost in the Void</title>
+<link id="favicon" rel="icon" type="image/x-icon" href="./assets/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,1,0" />
+<style>
+/* ══════════════════════════════════════════════════════════════════════
+   LOCALM · 404 Error Page Theme
+══════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:       #1e1e1e;
+  --s1:       rgba(21, 21, 21, 0.6);
+  --s2:       rgba(37, 37, 37, 0.5);
+  --s3:       rgba(45, 45, 45, 0.6);
+  --s4:       rgba(56, 56, 56, 0.8);
+  --bd:       rgba(255, 255, 255, 0.08);
+  --bd2:      rgba(255, 255, 255, 0.15);
+  --green:    #22c55e;
+  --gdim:     rgba(34, 197, 94, 0.15);
+  --red:      #ef4444;
+  
+  --tx:       #ffffff;
+  --tx-icon:  #a1a1aa;
+  --tx2:      #a1a1aa;
+  --tx3:      #71717a;
+  --blur:     20px;
+  
+  --r:        16px;
+  --sans:     'Geist', system-ui, sans-serif;
+  --mono:     'Geist Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background-color: var(--bg);
+  color: var(--tx);
+  overflow: hidden; /* Prevent scrolling on 404 */
+  -webkit-font-smoothing: antialiased;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 3D Canvas Background */
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+.material-symbols-rounded {
+  display: inline-flex; align-items: center; justify-content: center;
+  vertical-align: middle;
+}
+
+/* Glassmorphism Card */
+.card {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r);
+  padding: 48px;
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+  text-align: center;
+  max-width: 500px;
+  width: 90%;
+  margin: auto;
+  position: relative;
+  z-index: 10;
+  animation: floatCard 6s ease-in-out infinite;
+}
+
+@keyframes floatCard {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.btn {
+  padding: 14px 28px; border-radius: 8px; border: none; font-family: var(--sans);
+  font-size: 15px; font-weight: 700; cursor: pointer; transition: all .2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: #fff;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  margin-top: 24px;
+}
+.btn::after {
+  content: ''; position: absolute; top: 50%; left: 50%; width: 120%; height: 0;
+  background: rgba(255,255,255,0.1); transform: translate(-50%, -50%) rotate(45deg);
+  transition: height 0.3s ease; z-index: 1;
+}
+.btn:hover::after { height: 300%; }
+.btn span { position: relative; z-index: 2; }
+
+.btn-g { background: var(--green); color: #000; box-shadow: 0 4px 12px var(--gdim); }
+.btn-g:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(34,197,94,0.3); }
+.btn-g .material-symbols-rounded { color: #000; }
+
+/* Custom Typography */
+.logo { font-size: 24px; font-weight: 900; letter-spacing: -0.04em; position: absolute; top: 32px; left: 32px; z-index: 100; }
+.logo em { color: var(--green); font-style: normal; }
+
+.error-code {
+  font-size: 120px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--green);
+  text-shadow: 0 0 20px rgba(34,197,94,0.2);
+  margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+.error-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: var(--tx);
+}
+
+.error-desc {
+  color: var(--tx2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Glitch Effect on 404 */
+.glitch {
+  position: relative;
+}
+.glitch::before, .glitch::after {
+  content: "404";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.8;
+}
+.glitch::before {
+  color: #0ff;
+  z-index: -1;
+  animation: glitch-anim-1 2s infinite linear alternate-reverse;
+  -webkit-text-stroke: 0px;
+}
+.glitch::after {
+  color: #f0f;
+  z-index: -2;
+  animation: glitch-anim-2 3s infinite linear alternate-reverse;
+  -webkit-text-stroke: 0px;
+}
+
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+  20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+  40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+  60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+  80% { clip-path: inset(10% 0 70% 0); transform: translate(-1px, 1px); }
+  100% { clip-path: inset(30% 0 50% 0); transform: translate(1px, -1px); }
+}
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
+  20% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 2px); }
+  40% { clip-path: inset(30% 0 20% 0); transform: translate(2px, 1px); }
+  60% { clip-path: inset(70% 0 10% 0); transform: translate(-1px, -2px); }
+  80% { clip-path: inset(20% 0 50% 0); transform: translate(1px, 2px); }
+  100% { clip-path: inset(50% 0 30% 0); transform: translate(-2px, -1px); }
+}
+</style>
+</head>
+<body>
+
+  <script>
+        const originalTitle = document.title;
+        const originalFavicon = document.getElementById('favicon').href;
+        
+        // The "Away" assets
+        const awayTitles = ["Hey! Come Back!", "Hey! Come Back!"];
+        const awayFavicon = ["./assets/shock.png","./assets/worried.png"] // Replace with your "away" icon URL
+        
+        let titleInterval;
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // 1. Logic for when the user LEAVES the tab
+                let i = 0;
+                // We cycle the titles every 2 seconds to grab attention
+                titleInterval = setInterval(() => {
+                    document.title = awayTitles[i % awayTitles.length];
+                    // Change the favicon
+                    document.getElementById('favicon').href = awayFavicon[i % awayFavicon.length];
+                    i++;
+                }, 2000);
+
+                
+                
+            } else {
+                // 2. Logic for when the user RETURNS to the tab
+                clearInterval(titleInterval);
+                document.title = originalTitle;
+                document.getElementById('favicon').href = originalFavicon;
+            }
+        });
+    </script>
+
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="logo">LOCAL<em>M</em>.</div>
+
+<div class="card">
+  <div style="display: flex; justify-content: center; margin-bottom: 16px;">
+    <div style="width: 56px; height: 56px; background: var(--gdim); border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(34,197,94,0.3);">
+      <span class="material-symbols-rounded" style="font-size: 32px; color: var(--green);">public_off</span>
+    </div>
+  </div>
+  
+  <div class="error-code glitch">404</div>
+  <div class="error-title">Fell into the Void</div>
+  <p class="error-desc">
+    The server or page you are looking for doesn't exist, has been deleted, or you simply dug straight down.
+  </p>
+  
+  <a href="index.html" class="btn btn-g">
+    <span class="material-symbols-rounded" style="z-index: 2;">keyboard_return</span> <span>Respawn at Home</span>
+  </a>
+</div>
+
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+
+<script>
+  /* ══════════════════════════════════════════════════════════════════════
+     THREE.JS 3D BACKGROUND (Slightly slower for floating in the void)
+  ══════════════════════════════════════════════════════════════════════ */
+  const canvas = document.querySelector('#bg-canvas');
+  const scene = new THREE.Scene();
+  
+  // Match the app's --bg color
+  scene.fog = new THREE.FogExp2(0x1e1e1e, 0.04);
+
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.position.setZ(30);
+
+  const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+  const edges = new THREE.EdgesGeometry(geometry);
+  
+  const cubes = [];
+  const cubeCount = 30; // Fewer cubes for a more "empty void" feel
+
+  for (let i = 0; i < cubeCount; i++) {
+      const lineMaterial = new THREE.LineBasicMaterial({ color: 0x22c55e, transparent: true, opacity: 0.1 });
+      const wireframe = new THREE.LineSegments(edges, lineMaterial);
+      
+      const solidMaterial = new THREE.MeshBasicMaterial({ color: 0x252525, transparent: true, opacity: 0.4 });
+      const solidCube = new THREE.Mesh(geometry, solidMaterial);
+      
+      const group = new THREE.Group();
+      group.add(wireframe);
+      group.add(solidCube);
+
+      group.position.x = THREE.MathUtils.randFloatSpread(120);
+      group.position.y = THREE.MathUtils.randFloatSpread(120);
+      group.position.z = THREE.MathUtils.randFloatSpread(100);
+      
+      // Slower rotation and movement for the void
+      group.userData = {
+          rotX: Math.random() * 0.002,
+          rotY: Math.random() * 0.002,
+          moveY: (Math.random() - 0.5) * 0.008
+      };
+
+      scene.add(group);
+      cubes.push(group);
+  }
+
+  function animate() {
+      requestAnimationFrame(animate);
+
+      cubes.forEach(cube => {
+          cube.rotation.x += cube.userData.rotX;
+          cube.rotation.y += cube.userData.rotY;
+          cube.position.y += cube.userData.moveY;
+
+          if (cube.position.y > 60) cube.position.y = -60;
+          if (cube.position.y < -60) cube.position.y = 60;
+      });
+
+      // Very slow camera spin
+      scene.rotation.y += 0.0003;
+      renderer.render(scene, camera);
+  }
+
+  animate();
+
+  window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  let mouseX = 0;
+  let mouseY = 0;
+  document.addEventListener('mousemove', (event) => {
+      mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+      
+      // Reduced parallax effect for the void
+      camera.position.x += (mouseX * 2 - camera.position.x) * 0.02;
+      camera.position.y += (mouseY * 2 - camera.position.y) * 0.02;
+      camera.lookAt(scene.position);
+  });
+</script>
+</body>
+</html>

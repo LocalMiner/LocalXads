@@ -1,29 +1,530 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
-<html>
-    <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-QVXGJHJ0M1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOCALM | Next-Gen Minecraft Networking</title>
+<link id="favicon" rel="icon" type="image/x-icon" href="./assets/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,1,0" />
 
-  gtag('config', 'G-QVXGJHJ0M1');
-</script>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>LocalMiner - Ads</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-    </head>
-    <body>
-        <p>LocalMiner AdNetwork Page</p>
+<style>
+/* ══════════════════════════════════════════════════════════════════════
+   LOCALM · Website Glassmorphism Theme & Animations
+══════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg:       #1e1e1e;
+  --s1:       rgba(21, 21, 21, 0.6);
+  --s2:       rgba(37, 37, 37, 0.5);
+  --s3:       rgba(45, 45, 45, 0.6);
+  --s4:       rgba(56, 56, 56, 0.8);
+  --bd:       rgba(255, 255, 255, 0.08);
+  --bd2:      rgba(255, 255, 255, 0.15);
+  --green:    #22c55e;
+  --gdim:     rgba(34, 197, 94, 0.15);
+  --red:      #ef4444;
+  
+  --tx:       #ffffff;
+  --tx-icon:  #a1a1aa;
+  --tx2:      #a1a1aa;
+  --tx3:      #71717a;
+  --blur:     20px;
+  
+  --r:        16px;
+  --sans:     'Geist', system-ui, sans-serif;
+  --mono:     'Geist Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background-color: var(--bg);
+  color: var(--tx);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 3D Canvas Background */
+#bg-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: 0 0; }
+::-webkit-scrollbar-thumb { background: var(--s4); border-radius: 3px; }
+
+.material-symbols-rounded {
+  display: inline-flex; align-items: center; justify-content: center;
+  vertical-align: middle;
+}
+
+/* Reused App Components */
+.card {
+  background: var(--s2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r);
+  padding: 32px;
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: var(--bd2);
+  box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+}
+
+.clabel {
+  font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--tx3); margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
+}
+
+.btn {
+  padding: 12px 24px; border-radius: 8px; border: none; font-family: var(--sans);
+  font-size: 14px; font-weight: 700; cursor: pointer; transition: all .2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.btn::after {
+  content: ''; position: absolute; top: 50%; left: 50%; width: 120%; height: 0;
+  background: rgba(255,255,255,0.1); transform: translate(-50%, -50%) rotate(45deg);
+  transition: height 0.3s ease; z-index: 1;
+}
+.btn:hover::after { height: 300%; }
+.btn span { position: relative; z-index: 2; }
+
+.btn-g { background: var(--green); color: #000; box-shadow: 0 4px 12px var(--gdim); }
+.btn-g:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(34,197,94,0.3); }
+.btn-g .material-symbols-rounded { color: #000; }
+
+.btn-gh { background: var(--s3); color: var(--tx); border: 1px solid var(--bd); }
+.btn-gh:hover { background: var(--s4); border-color: var(--bd2); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+
+/* Special Pulse Effect for Fabric Mod Button */
+.btn-pulse { animation: pulse 2s infinite; border-color: rgba(34,197,94,0.5); color: var(--green); }
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+  70% { box-shadow: 0 0 0 15px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; }
+.bg { background: var(--gdim); color: var(--green); border: 1px solid rgba(34,197,94,0.3); }
+
+/* Layout Utilities */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.flex-center { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
+
+@media(max-width: 900px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+}
+
+/* Custom Typography */
+.logo { font-size: 24px; font-weight: 900; letter-spacing: -0.04em; }
+.logo em { color: var(--green); font-style: normal; }
+.hero-title { font-size: 72px; font-weight: 900; letter-spacing: -0.04em; line-height: 1.1; text-shadow: 0 4px 20px rgba(0,0,0,0.5); margin-bottom: 24px; }
+.hero-sub { color: var(--tx2); font-size: 20px; font-weight: 500; line-height: 1.6; max-width: 600px; margin: 0 auto 40px; }
+
+/* Navigation */
+nav {
+  position: fixed; width: 100%; top: 0; z-index: 1000; padding: 20px 0;
+  background: linear-gradient(to bottom, rgba(30,30,30,0.8), transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: padding 0.3s ease, background 0.3s ease;
+}
+nav.scrolled { padding: 12px 0; background: rgba(20,20,20,0.9); }
+.nav-inner { display: flex; justify-content: space-between; align-items: center; }
+.nav-links { display: flex; gap: 32px; font-weight: 600; font-size: 13px; color: var(--tx2); }
+.nav-links a { color: inherit; text-decoration: none; transition: color 0.2s; text-transform: uppercase; letter-spacing: 0.05em; }
+.nav-links a:hover { color: var(--tx); }
+
+/* Sections */
+section { padding: 120px 0; position: relative; z-index: 10; }
+
+.stat-num { font-size: 64px; font-weight: 900; letter-spacing: -0.04em; color: var(--tx); margin-bottom: 8px; font-variant-numeric: tabular-nums; }
+.stat-num span { color: var(--green); }
+
+/* Floating Image Animations */
+.floating-png { filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5)); transition: transform 0.3s ease; }
+.floating-png:hover { transform: scale(1.1) rotate(5deg) !important; cursor: pointer; }
+
+.float-slow { animation: float 6s ease-in-out infinite; }
+.float-medium { animation: float 4.5s ease-in-out infinite 1s; }
+.float-fast { animation: float 3s ease-in-out infinite 0.5s; }
+.float-reverse { animation: floatReverse 5s ease-in-out infinite 2s; }
+
+@keyframes float { 
+  0% { transform: translateY(0px) rotate(0deg); } 
+  50% { transform: translateY(-20px) rotate(2deg); } 
+  100% { transform: translateY(0px) rotate(0deg); } 
+}
+@keyframes floatReverse { 
+  0% { transform: translateY(0px) rotate(0deg); } 
+  50% { transform: translateY(20px) rotate(-3deg); } 
+  100% { transform: translateY(0px) rotate(0deg); } 
+}
+
+/* Scroll Reveal Classes */
+.reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.reveal.active { opacity: 1; transform: translateY(0); }
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+
+</style>
+</head>
+<body>
+
+    <script>
+        const originalTitle = document.title;
+        const originalFavicon = document.getElementById('favicon').href;
         
-        <script src="" async defer></script>
-    </body>
+        // The "Away" assets
+        const awayTitles = ["Hey! Come Back!", "Hey! Come Back!"];
+        const awayFavicon = ["./assets/shock.png","./assets/worried.png"] // Replace with your "away" icon URL
+        
+        let titleInterval;
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // 1. Logic for when the user LEAVES the tab
+                let i = 0;
+                // We cycle the titles every 2 seconds to grab attention
+                titleInterval = setInterval(() => {
+                    document.title = awayTitles[i % awayTitles.length];
+                    // Change the favicon
+                    document.getElementById('favicon').href = awayFavicon[i % awayFavicon.length];
+                    i++;
+                }, 2000);
+
+                
+                
+            } else {
+                // 2. Logic for when the user RETURNS to the tab
+                clearInterval(titleInterval);
+                document.title = originalTitle;
+                document.getElementById('favicon').href = originalFavicon;
+            }
+        });
+    </script>
+
+<canvas id="bg-canvas"></canvas>
+
+<nav id="navbar">
+  <div class="container nav-inner">
+    <div class="logo">LOCAL<em>M</em>.</div>
+    <div class="nav-links hidden-mobile">
+      <a href="#features">Features</a>
+      <a href="#community">Community</a>
+      <a href="#download">Download</a>
+    </div>
+    <button class="btn btn-gh" style="padding: 8px 16px; font-size: 13px;" onclick="window.open('https://login.localm.eu.org')">
+      <span class="material-symbols-rounded" style="font-size: 18px; z-index: 2;">login</span> <span>Client Login</span>
+    </button>
+  </div>
+</nav>
+
+<section style="min-height: 100vh; display: flex; align-items: center; text-align: center; padding-top: 160px; overflow: hidden;">
+  <div class="container">
+    <div class="badge bg reveal" style="margin-bottom: 24px; padding: 6px 16px; font-size: 12px;">
+      <span class="material-symbols-rounded" style="font-size: 16px;">rocket_launch</span> V2 PLATFORM NOW LIVE
+    </div>
+    <h1 class="hero-title reveal delay-1">Zero Ping.<br>Infinite <em>Blocks</em>.</h1>
+    <p class="hero-sub reveal delay-2">The ultimate networking layer for your Minecraft servers. Security-first architecture with native clients for Android, Windows, and direct Fabric Mod integration.</p>
+    
+    <div class="flex-center reveal delay-3" style="gap: 16px; margin-bottom: 60px; align-items: stretch;">
+      <button class="btn btn-g" style="padding: 16px 32px; font-size: 16px;" onclick="window.open('https://github.com/LocalMiner/LOCALMP/releases/latest')">
+        <span class="material-symbols-rounded" style="z-index: 2;">download</span> <span>Download for Windows</span>
+      </button>
+      
+      <button class="btn btn-gh btn-pulse" style="padding: 10px 32px; font-size: 16px; flex-direction: column; gap: 4px;" onclick="window.open('https://github.com/LocalMiner/LOCALM-Fabric-Mod/releases/latest')">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="material-symbols-rounded" style="z-index: 2;">extension</span> <span>Download Fabric Mod</span>
+        </div>
+        <div style="font-size: 10px; color: var(--tx2); font-weight: 800; letter-spacing: 0.05em; z-index: 2;">LINUX / WIN / MAC</div>
+      </button>
+      
+      <button class="btn btn-gh" style="padding: 16px 32px; font-size: 16px;" disabled>
+        <span class="material-symbols-rounded" style="z-index: 2;">android</span> <span>Soon</span>
+      </button>
+    </div>
+
+    <div class="flex-center reveal delay-3" style="gap: 24px; color: var(--tx3); font-weight: 700; font-size: 14px;">
+      <span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-rounded">desktop_windows</span> WINDOWS</span>
+      <span>•</span>
+      <span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-rounded">smartphone</span> ANDROID</span>
+      <span>•</span>
+      <span style="display:flex; align-items:center; gap:8px;">
+        <span class="material-symbols-rounded">extension</span> FABRIC MOD
+        <span style="display:flex; gap: 4px; margin-left: 6px;">
+          <span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--bd); padding: 2px 8px;">LINUX</span>
+          <span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--bd); padding: 2px 8px;">MAC</span>
+          <span class="badge" style="background: rgba(255,255,255,0.05); border: 1px solid var(--bd); padding: 2px 8px;">WIN</span>
+        </span>
+      </span>
+    </div>
+  </div>
+  
+  <img src="./assets/diamond.png" onerror="this.src='https://minecraft.wiki/images/Diamond_JE3_BE3.png'" alt="Diamond" class="floating-png float-fast" style="position: absolute; top: 20%; left: 10%; width: 60px; opacity: 0.6; filter: blur(1px);">
+  <img src="./assets/ender_pearl.png" onerror="this.src='https://minecraft.wiki/images/Ender_Pearl_JE3_BE2.png'" alt="Ender Pearl" class="floating-png float-reverse" style="position: absolute; top: 30%; right: 15%; width: 50px; opacity: 0.7;">
+</section>
+
+<section id="community" style="background: rgba(0,0,0,0.2); border-top: 1px solid var(--bd); border-bottom: 1px solid var(--bd);">
+  <div class="container">
+    <div class="grid-2">
+      <div class="card reveal" style="text-align: center; border-color: var(--green);">
+        <div class="stat-num" id="dl-counter" data-target="1.4">0.0<span>M+</span></div>
+        <div class="clabel" style="justify-content: center;"><span class="material-symbols-rounded">download</span> Total Downloads</div>
+        <p style="color: var(--tx2); font-size: 14px; line-height: 1.6;">Join the massive community powering their networks with LOCALM's robust infrastructure.</p>
+      </div>
+      
+      <div class="card reveal delay-1" style="text-align: center;">
+        <div class="stat-num" id="creator-counter" data-target="100">0<span>+</span></div>
+        <div class="clabel" style="justify-content: center;"><span class="material-symbols-rounded">verified</span> Trusted Creators</div>
+        <p style="color: var(--tx2); font-size: 14px; line-height: 1.6;">The go-to choice for YouTubers demanding rock-solid stability during live community events.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container grid-2" style="align-items: center;">
+    <div class="reveal">
+      <div class="clabel"><span class="material-symbols-rounded">category</span> Built for Modding</div>
+      <h2 style="font-size: 48px; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 24px; line-height: 1.1;">Seamless Fabric <br><span style="color: var(--green);">Integration.</span></h2>
+      <p style="color: var(--tx2); font-size: 16px; line-height: 1.6; margin-bottom: 32px;">
+        Running heavy modpacks? LOCALM is designed to handle it natively. Integrate directly into your workflow without touching router settings.
+      </p>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 16px; color: var(--tx); margin-bottom: 32px;">
+        <li style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
+          <span class="material-symbols-rounded" style="color: var(--green);">devices</span> Native support for Linux, Windows & macOS
+        </li>
+        <li style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
+          <span class="material-symbols-rounded" style="color: var(--green);">check_circle</span> Drop-in Fabric Mod Support
+        </li>
+        <li style="display: flex; align-items: center; gap: 12px; font-weight: 600;">
+          <span class="material-symbols-rounded" style="color: var(--green);">check_circle</span> Automatic Port Management
+        </li>
+      </ul>
+      <button class="btn btn-g" style="padding: 14px 28px;" onclick="window.open('https://github.com/LocalMiner/LOCALM-Fabric-Mod/releases/latest')">
+        <span class="material-symbols-rounded" style="z-index: 2;">extension</span> <span>Get the Mod</span>
+      </button>
+    </div>
+    <div style="position: relative; height: 400px;" class="flex-center reveal delay-1">
+      <img src="./assets/guardian.png" onerror="this.src='https://creeper.host/assets/images/creeper-head.png'" alt="Guardian" class="floating-png float-slow" style="width: 250px; z-index: 2;">
+      <img src="./assets/bee.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png'" alt="Bee" class="floating-png float-medium" style="position: absolute; bottom: 20px; left: 40px; width: 150px; opacity: 0.8; filter: blur(2px) drop-shadow(0 10px 20px rgba(0,0,0,0.8));">
+      <img src="./assets/pickaxe.png" onerror="this.src='https://minecraft.wiki/images/Diamond_Pickaxe_JE3_BE3.png'" alt="Pickaxe" class="floating-png float-fast" style="position: absolute; top: -20px; right: 20px; width: 100px; transform: rotate(15deg); z-index: 1;">
+    </div>
+  </div>
+</section>
+
+<section id="features" style="padding-top: 0;">
+  <div class="container">
+    <div class="clabel reveal" style="justify-content: center; margin-bottom: 48px; font-size: 14px;"><span class="material-symbols-rounded">tune</span> Core Architecture</div>
+    
+    <div class="grid-3">
+      <div class="card reveal">
+        <div style="width: 48px; height: 48px; background: var(--s3); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid var(--bd);">
+          <span class="material-symbols-rounded" style="font-size: 28px; color: var(--tx);">speed</span>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 12px;">Ultra-Less Ping</h3>
+        <p style="color: var(--tx2); font-size: 14px; line-height: 1.6;">Optimized routing protocols ensure your packets take the fastest path. Say goodbye to block-lag.</p>
+      </div>
+
+      <div class="card reveal delay-1">
+        <div style="width: 48px; height: 48px; background: var(--gdim); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid rgba(34,197,94,0.3);">
+          <span class="material-symbols-rounded" style="font-size: 28px; color: var(--green);">shield</span>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 12px;">Security Focused</h3>
+        <p style="color: var(--tx2); font-size: 14px; line-height: 1.6;">Enterprise-grade mitigation and encrypted tunneling built right in. Your real IP stays hidden.</p>
+      </div>
+
+      <div class="card reveal delay-2">
+        <div style="width: 48px; height: 48px; background: var(--s3); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; border: 1px solid var(--bd);">
+          <span class="material-symbols-rounded" style="font-size: 28px; color: var(--tx);">devices</span>
+        </div>
+        <h3 style="font-size: 18px; font-weight: 800; margin-bottom: 12px;">Cross-Platform</h3>
+        <p style="color: var(--tx2); font-size: 14px; line-height: 1.6;">Host from your Windows rig, and let friends join seamlessly from their Android devices.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer style="border-top: 1px solid var(--bd); padding: 40px 0; background: var(--s1); backdrop-filter: blur(var(--blur)); position: relative; z-index: 10;">
+  <div class="container" style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--tx3); font-weight: 600;">
+    <div class="logo" style="font-size: 16px;">LOCAL<em>M</em>.</div>
+    <div>Authors @healer-op , @trazhub</div>
+    <div style="display: flex; gap: 16px;">
+      <a href="#" style="color: var(--tx3); text-decoration: none; transition: color 0.2s;">Terms</a>
+      <a href="#" style="color: var(--tx3); text-decoration: none; transition: color 0.2s;">Privacy</a>
+      <a href="#" style="color: var(--tx3); text-decoration: none; transition: color 0.2s;">Discord</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+
+<script>
+  /* ══════════════════════════════════════════════════════════════════════
+     UI INTERACTION & ANIMATIONS
+  ══════════════════════════════════════════════════════════════════════ */
+  
+  // 1. Scroll Reveal Logic
+  const revealElements = document.querySelectorAll('.reveal');
+  const revealOptions = { threshold: 0.15, rootMargin: "0px 0px -50px 0px" };
+  
+  const revealOnScroll = new IntersectionObserver(function(entries, observer) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('active');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, revealOptions);
+
+  revealElements.forEach(el => revealOnScroll.observe(el));
+
+  // 2. Navbar Scroll Effect
+  window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 50) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  });
+
+  // 3. Number Counter Animation Logic (1.4M+ and 100+)
+  function animateValue(obj, start, end, duration, isDecimal) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      // Ease out quartic
+      const easeProgress = 1 - Math.pow(1 - progress, 4);
+      const current = (easeProgress * (end - start) + start);
+      
+      if (isDecimal) {
+        obj.innerHTML = current.toFixed(1) + '<span>M+</span>';
+      } else {
+        obj.innerHTML = Math.floor(current) + '<span>+</span>';
+      }
+      
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
+
+  // Observe the community section to trigger counters
+  const statsSection = document.getElementById('community');
+  let countersTriggered = false;
+
+  const statsObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !countersTriggered) {
+      countersTriggered = true;
+      const dlCount = document.getElementById('dl-counter');
+      const crCount = document.getElementById('creator-counter');
+      
+      // Animate 0 to 1.4 over 2.5 seconds
+      animateValue(dlCount, 0, parseFloat(dlCount.getAttribute('data-target')), 2500, true);
+      // Animate 0 to 100 over 2.5 seconds
+      animateValue(crCount, 0, parseInt(crCount.getAttribute('data-target')), 2500, false);
+    }
+  }, { threshold: 0.5 });
+  
+  statsObserver.observe(statsSection);
+
+  /* ══════════════════════════════════════════════════════════════════════
+     THREE.JS 3D BACKGROUND
+  ══════════════════════════════════════════════════════════════════════ */
+  const canvas = document.querySelector('#bg-canvas');
+  const scene = new THREE.Scene();
+  
+  scene.fog = new THREE.FogExp2(0x1e1e1e, 0.04);
+
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+  
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.position.setZ(30);
+
+  const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+  const edges = new THREE.EdgesGeometry(geometry);
+  
+  const cubes = [];
+  const cubeCount = 45;
+
+  for (let i = 0; i < cubeCount; i++) {
+      const lineMaterial = new THREE.LineBasicMaterial({ color: 0x22c55e, transparent: true, opacity: 0.15 });
+      const wireframe = new THREE.LineSegments(edges, lineMaterial);
+      
+      const solidMaterial = new THREE.MeshBasicMaterial({ color: 0x252525, transparent: true, opacity: 0.6 });
+      const solidCube = new THREE.Mesh(geometry, solidMaterial);
+      
+      const group = new THREE.Group();
+      group.add(wireframe);
+      group.add(solidCube);
+
+      group.position.x = THREE.MathUtils.randFloatSpread(100);
+      group.position.y = THREE.MathUtils.randFloatSpread(100);
+      group.position.z = THREE.MathUtils.randFloatSpread(80);
+      
+      group.userData = {
+          rotX: Math.random() * 0.005,
+          rotY: Math.random() * 0.005,
+          moveY: (Math.random() - 0.5) * 0.015
+      };
+
+      scene.add(group);
+      cubes.push(group);
+  }
+
+  function animate() {
+      requestAnimationFrame(animate);
+
+      cubes.forEach(cube => {
+          cube.rotation.x += cube.userData.rotX;
+          cube.rotation.y += cube.userData.rotY;
+          cube.position.y += cube.userData.moveY;
+
+          if (cube.position.y > 50) cube.position.y = -50;
+          if (cube.position.y < -50) cube.position.y = 50;
+      });
+
+      scene.rotation.y += 0.0005;
+      renderer.render(scene, camera);
+  }
+
+  animate();
+
+  window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+
+  let mouseX = 0;
+  let mouseY = 0;
+  document.addEventListener('mousemove', (event) => {
+      mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+      mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+      
+      camera.position.x += (mouseX * 3 - camera.position.x) * 0.05;
+      camera.position.y += (mouseY * 3 - camera.position.y) * 0.05;
+      camera.lookAt(scene.position);
+  });
+</script>
+</body>
 </html>
