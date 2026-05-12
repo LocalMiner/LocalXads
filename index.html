@@ -1,762 +1,546 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LOCALM | Next-Gen Minecraft Networking</title>
-<link id="favicon" rel="icon" type="image/x-icon" href="./assets/logo.png">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,1,0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOCALM | Premium Minecraft Networking</title>
+    <link id="favicon" rel="icon" type="image/x-icon" href="./assets/logo.png">
 
-<style>
-/* ══════════════════════════════════════════════════════════════════════
-   LOCALM · Brutalist-Gaming Editorial Theme
-══════════════════════════════════════════════════════════════════════ */
-:root {
-  --bg:        #0a0a0a;
-  --bg2:       #111111;
-  --bg3:       #181818;
-  --green:     #00ff88;
-  --green-dim: rgba(0, 255, 136, 0.08);
-  --green-mid: rgba(0, 255, 136, 0.2);
-  --green-glow:rgba(0, 255, 136, 0.4);
-  --red:       #ff3b3b;
-  --amber:     #ffb800;
-  
-  --tx:        #f0f0f0;
-  --tx2:       #888888;
-  --tx3:       #444444;
-  --bd:        rgba(255,255,255,0.06);
-  --bd2:       rgba(255,255,255,0.12);
-  --bd-green:  rgba(0,255,136,0.25);
-  
-  --r:         4px;
-  --r2:        8px;
-  --blur:      24px;
-  
-  --display:  'Syne', sans-serif;
-  --mono:     'Space Mono', monospace;
-}
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Syne:wght@700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#000000',
+                        secondary: '#00FF57',
+                        surface: '#F9FAFB',
+                        border: '#E5E7EB',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                        mono: ['Space Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <!-- Libraries -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
 
-html { scroll-behavior: smooth; }
+    <style>
+        body { background-color: #FFFFFF; color: #111827; }
+        
+        /* Subtle Grid */
+        .grid-bg {
+            background-image: linear-gradient(#F3F4F6 1px, transparent 1px),
+                              linear-gradient(90deg, #F3F4F6 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
 
-body {
-  font-family: var(--mono);
-  background: var(--bg);
-  color: var(--tx);
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  cursor: crosshair;
-}
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            border-bottom: 1px solid #F3F4F6;
+        }
 
-/* Scanline overlay */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.03) 2px,
-    rgba(0,0,0,0.03) 4px
-  );
-  pointer-events: none;
-  z-index: 9999;
-}
+        .btn-primary {
+            background: #000000;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-/* Grid overlay */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image:
-    linear-gradient(rgba(0,255,136,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,136,0.03) 1px, transparent 1px);
-  background-size: 48px 48px;
-  pointer-events: none;
-  z-index: 0;
-}
+        .btn-secondary {
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { border-color: #000000; background: #F9FAFB; }
 
-#bg-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: -1;
-}
+        .card {
+            background: #FFFFFF;
+            border: 1px solid #F3F4F6;
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s ease;
+        }
+        .card:hover { border-color: #00FF57; transform: translateY(-4px); }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg2); }
-::-webkit-scrollbar-thumb { background: var(--green); border-radius: 0; }
+        /* Marquee Logic */
+        .marquee-container {
+            overflow: hidden;
+            display: flex;
+            user-select: none;
+            gap: 24px;
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+        .marquee-content {
+            flex-shrink: 0;
+            display: flex;
+            gap: 24px;
+            min-width: 100%;
+            animation: scroll 40s linear infinite;
+        }
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
 
-.material-symbols-rounded {
-  display: inline-flex; align-items: center; justify-content: center;
-  vertical-align: middle;
-}
+        .creator-card {
+            width: 320px;
+            flex-shrink: 0;
+            background: #FFFFFF;
+            border: 1px solid #F3F4F6;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        .creator-banner {
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+            background-color: #F3F4F6;
+        }
+        .creator-avatar {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            border: 3px solid #FFFFFF;
+            margin-top: -32px;
+            margin-left: 16px;
+            background: #F3F4F6;
+            object-fit: cover;
+            position: relative;
+            z-index: 10;
+        }
 
-/* ── Cards ── */
-.card {
-  background: var(--bg2);
-  border: 1px solid var(--bd);
-  border-radius: var(--r);
-  padding: 32px;
-  position: relative;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  overflow: hidden;
-}
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 3px; height: 0;
-  background: var(--green);
-  transition: height 0.4s ease;
-}
-.card:hover { 
-  transform: translateY(-6px);
-  border-color: var(--bd-green);
-  box-shadow: 0 0 40px rgba(0,255,136,0.08), 0 20px 40px rgba(0,0,0,0.5);
-}
-.card:hover::before { height: 100%; }
-
-/* ── Labels ── */
-.clabel {
-  font-family: var(--mono);
-  font-size: 10px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
-  color: var(--green); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
-}
-.clabel::before {
-  content: '//';
-  opacity: 0.5;
-}
-
-/* ── Buttons ── */
-.btn {
-  padding: 12px 24px; border-radius: var(--r); border: 1px solid transparent;
-  font-family: var(--mono); font-size: 13px; font-weight: 700; cursor: pointer;
-  transition: all .2s ease; display: inline-flex; align-items: center;
-  justify-content: center; gap: 8px;
-  position: relative; overflow: hidden; letter-spacing: 0.05em;
-}
-
-.btn-g {
-  background: var(--green);
-  border-color: var(--green);
-  color: #000;
-  box-shadow: 0 0 20px rgba(0,255,136,0.3);
-}
-.btn-g:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 35px rgba(0,255,136,0.5), 0 8px 20px rgba(0,0,0,0.3);
-  background: #22ffaa;
-}
-.btn-g .material-symbols-rounded { color: #000; }
-
-.btn-gh {
-  background: transparent;
-  border-color: var(--bd2);
-  color: var(--tx);
-}
-.btn-gh:hover {
-  border-color: var(--green);
-  color: var(--green);
-  transform: translateY(-2px);
-  box-shadow: 0 0 20px rgba(0,255,136,0.1);
-}
-
-.btn-pulse { 
-  border-color: var(--bd-green) !important;
-  color: var(--green) !important;
-  animation: pulse 2.5s infinite;
-}
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,136,0.4); }
-  50% { box-shadow: 0 0 0 12px rgba(0,255,136,0); }
-}
-
-.badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 3px 10px; border-radius: 2px;
-  font-family: var(--mono); font-size: 10px; font-weight: 700;
-  letter-spacing: 0.1em;
-}
-.bg { background: var(--green-dim); color: var(--green); border: 1px solid var(--bd-green); }
-
-/* ── Layout ── */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.flex-center { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
-
-@media(max-width: 900px) {
-  .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  .hero-title { font-size: 48px !important; }
-}
-
-/* ── Typography ── */
-.logo {
-  font-family: var(--display);
-  font-size: 22px; font-weight: 800; letter-spacing: -0.02em;
-}
-.logo em {
-  color: var(--green); font-style: normal;
-  text-shadow: 0 0 20px var(--green-glow);
-}
-.logo span { color: var(--tx3); font-size: 14px; font-weight: 400; }
-
-.hero-title {
-  font-family: var(--display);
-  font-size: 80px; font-weight: 800;
-  letter-spacing: -0.04em; line-height: 1.0;
-  margin-bottom: 28px;
-}
-.hero-title em {
-  color: var(--green);
-  font-style: normal;
-  text-shadow: 0 0 40px rgba(0,255,136,0.5);
-}
-.hero-title .outline {
-  -webkit-text-stroke: 2px rgba(255,255,255,0.15);
-  color: transparent;
-}
-
-.hero-sub {
-  color: var(--tx2);
-  font-family: var(--mono);
-  font-size: 14px;
-  line-height: 1.9;
-  max-width: 560px;
-  margin: 0 auto 40px;
-  letter-spacing: 0.02em;
-}
-
-.section-title {
-  font-family: var(--display);
-  font-size: 52px; font-weight: 800;
-  letter-spacing: -0.04em; line-height: 1.05;
-  margin-bottom: 24px;
-}
-.section-title em {
-  color: var(--green); font-style: normal;
-  text-shadow: 0 0 30px rgba(0,255,136,0.4);
-}
-
-/* ── Navigation ── */
-nav {
-  position: fixed; width: 100%; top: 0; z-index: 1000;
-  padding: 20px 0;
-  background: rgba(10,10,10,0.7);
-  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--bd);
-  transition: padding 0.3s ease, background 0.3s ease;
-}
-nav.scrolled {
-  padding: 12px 0;
-  background: rgba(10,10,10,0.95);
-  border-bottom-color: var(--bd2);
-}
-.nav-inner { display: flex; justify-content: space-between; align-items: center; }
-.nav-links {
-  display: flex; gap: 40px;
-  font-family: var(--mono);
-  font-weight: 700; font-size: 11px;
-  letter-spacing: 0.12em; text-transform: uppercase;
-}
-.nav-links a {
-  color: var(--tx3); text-decoration: none;
-  transition: color 0.2s;
-  position: relative;
-}
-.nav-links a::after {
-  content: '';
-  position: absolute; bottom: -4px; left: 0;
-  width: 0; height: 1px;
-  background: var(--green);
-  transition: width 0.25s ease;
-}
-.nav-links a:hover { color: var(--green); }
-.nav-links a:hover::after { width: 100%; }
-
-/* ── Stat Numbers ── */
-.stat-num {
-  font-family: var(--display);
-  font-size: 72px; font-weight: 800;
-  letter-spacing: -0.05em; color: var(--tx);
-  margin-bottom: 8px; font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-.stat-num span { color: var(--green); }
-
-/* ── Floating Assets ── */
-.floating-png {
-  filter: drop-shadow(0 10px 30px rgba(0,0,0,0.8))
-          drop-shadow(0 0 20px rgba(0,255,136,0.1));
-  transition: transform 0.3s ease;
-  image-rendering: pixelated;
-}
-.floating-png:hover { transform: scale(1.15) rotate(5deg) !important; cursor: crosshair; }
-
-.float-slow    { animation: float 6s ease-in-out infinite; }
-.float-medium  { animation: float 4.5s ease-in-out infinite 1s; }
-.float-fast    { animation: float 3s ease-in-out infinite 0.5s; }
-.float-reverse { animation: floatReverse 5s ease-in-out infinite 2s; }
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50%       { transform: translateY(-22px) rotate(3deg); }
-}
-@keyframes floatReverse {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50%       { transform: translateY(22px) rotate(-3deg); }
-}
-
-/* ── Scroll Reveal ── */
-.reveal { opacity: 0; transform: translateY(30px); transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.reveal.active { opacity: 1; transform: translateY(0); }
-.delay-1 { transition-delay: 0.1s; }
-.delay-2 { transition-delay: 0.2s; }
-.delay-3 { transition-delay: 0.3s; }
-
-/* ── Sections ── */
-section { padding: 120px 0; position: relative; z-index: 10; }
-
-/* ── Tag accents ── */
-.tag-accent {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--tx3);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-/* ── Divider ── */
-.divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--bd2) 30%, var(--green-mid) 50%, var(--bd2) 70%, transparent);
-}
-
-/* ── Feature icon boxes ── */
-.feature-icon {
-  width: 48px; height: 48px;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 24px;
-  position: relative;
-}
-.feature-icon::before {
-  content: '';
-  position: absolute; inset: 0;
-  border: 1px solid var(--bd);
-  border-radius: var(--r);
-  transition: border-color 0.3s;
-}
-.card:hover .feature-icon::before { border-color: var(--bd-green); }
-
-/* ── Platform badges ── */
-.platform-strip {
-  display: flex; align-items: center; gap: 20px;
-  flex-wrap: wrap;
-  font-family: var(--mono);
-  font-size: 11px; font-weight: 700;
-  color: var(--tx3); letter-spacing: 0.1em;
-}
-.platform-strip .dot { width: 4px; height: 4px; background: var(--tx3); border-radius: 50%; }
-
-/* ── Checklist ── */
-.checklist { list-style: none; display: flex; flex-direction: column; gap: 16px; }
-.checklist li {
-  display: flex; align-items: center; gap: 14px;
-  font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--tx);
-  letter-spacing: 0.02em;
-}
-.checklist li .material-symbols-rounded { color: var(--green); font-size: 18px; flex-shrink: 0; }
-
-/* ── Terminal-style text ── */
-.terminal-line {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--tx3);
-  letter-spacing: 0.06em;
-}
-.terminal-line::before { content: '> '; color: var(--green); }
-
-/* ── Hero corner decorations ── */
-.corner-tl, .corner-br {
-  position: absolute;
-  width: 40px; height: 40px;
-  pointer-events: none;
-}
-.corner-tl { top: 20px; left: 20px; border-top: 2px solid var(--green); border-left: 2px solid var(--green); }
-.corner-br { bottom: 20px; right: 20px; border-bottom: 2px solid var(--green); border-right: 2px solid var(--green); }
-
-/* ── Glow line under stats ── */
-.glow-line {
-  height: 2px;
-  margin-top: 24px;
-  background: linear-gradient(90deg, transparent, var(--green), transparent);
-  opacity: 0.4;
-}
-</style>
+        .badge-minimal {
+            background: #F3F4F6;
+            color: #4B5563;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+    </style>
 </head>
-<body>
+<body class="font-sans antialiased grid-bg">
 
-<script>
-  const originalTitle = document.title;
-  const originalFavicon = document.getElementById('favicon').href;
-  const awayTitles = ["Hey! Come Back!", "Hey! Come Back!"];
-  const awayFavicon = ["./assets/shock.png","./assets/worried.png"];
-  let titleInterval;
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      let i = 0;
-      titleInterval = setInterval(() => {
-        document.title = awayTitles[i % awayTitles.length];
-        document.getElementById('favicon').href = awayFavicon[i % awayFavicon.length];
-        i++;
-      }, 2000);
-    } else {
-      clearInterval(titleInterval);
-      document.title = originalTitle;
-      document.getElementById('favicon').href = originalFavicon;
-    }
-  });
-</script>
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 glass-nav">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                <div class="w-7 h-7 bg-black rounded flex items-center justify-center">
+                    <span class="text-secondary font-bold text-lg font-display">L</span>
+                </div>
+                <span class="font-display text-lg font-bold tracking-tight">LOCALM</span>
+            </div>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#how-it-works" class="text-xs font-semibold text-gray-400 hover:text-black transition-colors uppercase tracking-widest">Tech</a>
+                <a href="#comparison" class="text-xs font-semibold text-gray-400 hover:text-black transition-colors uppercase tracking-widest">Comparison</a>
+                <a href="#creators" class="text-xs font-semibold text-gray-400 hover:text-black transition-colors uppercase tracking-widest">Creators</a>
+                <a href="#team" class="text-xs font-semibold text-gray-400 hover:text-black transition-colors uppercase tracking-widest">Team</a>
+                <a href="#features" class="text-xs font-semibold text-gray-400 hover:text-black transition-colors uppercase tracking-widest">Features</a>
+            </div>
 
-<canvas id="bg-canvas"></canvas>
-
-<!-- ══ NAV ══════════════════════════════════════════════════════════════ -->
-<nav id="navbar">
-  <div class="container nav-inner">
-    <div class="logo">LOCAL<em>M</em><span>_v2</span></div>
-    <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#community">Community</a>
-      <a href="#download">Download</a>
-    </div>
-    <button class="btn btn-gh" style="padding: 8px 18px; font-size: 11px;" onclick="window.open('https://login.localm.eu.org')">
-      <span class="material-symbols-rounded" style="font-size: 16px;">login</span>
-      <span>Client Login</span>
-    </button>
-  </div>
-</nav>
-
-<!-- ══ HERO ═════════════════════════════════════════════════════════════ -->
-<section style="min-height: 100vh; display: flex; align-items: center; text-align: center; padding-top: 160px; overflow: hidden;">
-  <div class="container" style="position: relative;">
-    <div class="corner-tl"></div>
-    <div class="corner-br"></div>
-
-    <div class="reveal" style="margin-bottom: 20px;">
-      <span class="badge bg">
-        <span class="material-symbols-rounded" style="font-size: 14px;">rocket_launch</span>
-        V2 PLATFORM NOW LIVE
-      </span>
-    </div>
-
-    <h1 class="hero-title reveal delay-1">
-      Zero Ping.<br><em>Infinite</em> <span class="outline">Blocks</span>.
-    </h1>
-
-    <p class="hero-sub reveal delay-2">
-      The ultimate networking layer for your Minecraft servers.<br>
-      Security-first architecture with native clients for Android,<br>
-      Windows, and direct Fabric Mod integration.
-    </p>
-
-    <div class="flex-center reveal delay-3" style="gap: 12px; margin-bottom: 48px; align-items: stretch;" id="download">
-      <button class="btn btn-g" style="padding: 15px 30px; font-size: 13px;" onclick="window.open('https://github.com/LocalMiner/LOCALMP/releases/latest')">
-        <span class="material-symbols-rounded" style="z-index: 2; font-size: 18px;">download</span>
-        <span>Download for Windows</span>
-      </button>
-
-      <button class="btn btn-gh btn-pulse" style="padding: 10px 30px; font-size: 13px; flex-direction: column; gap: 4px;" onclick="window.open('https://github.com/LocalMiner/LOCALM-Fabric-Mod/releases/latest')">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span class="material-symbols-rounded" style="z-index: 2; font-size: 18px;">extension</span>
-          <span>Download Fabric Mod</span>
+            <div class="flex items-center gap-4">
+                <a href="https://login.localm.eu.org" class="text-xs font-bold hover:underline uppercase tracking-tighter">Login</a>
+                <button onclick="document.getElementById('download').scrollIntoView()" class="btn-primary py-2 px-5 text-xs">GET STARTED</button>
+            </div>
         </div>
-        <div class="tag-accent" style="color: var(--green); opacity: 0.7;">LINUX / WIN / MAC</div>
-      </button>
+    </nav>
 
-      <button class="btn btn-gh" style="padding: 15px 30px; font-size: 13px; opacity: 0.4;" disabled>
-        <span class="material-symbols-rounded" style="z-index: 2; font-size: 18px;">android</span>
-        <span>Android — Soon</span>
-      </button>
-    </div>
-
-    <div class="platform-strip flex-center reveal delay-3" style="justify-content: center;">
-      <span class="material-symbols-rounded" style="font-size: 16px; color: var(--tx3);">desktop_windows</span>
-      <span>WINDOWS</span>
-      <span class="dot"></span>
-      <span class="material-symbols-rounded" style="font-size: 16px; color: var(--tx3);">smartphone</span>
-      <span>ANDROID</span>
-      <span class="dot"></span>
-      <span class="material-symbols-rounded" style="font-size: 16px; color: var(--tx3);">extension</span>
-      <span>FABRIC MOD</span>
-      <span class="badge" style="background: rgba(255,255,255,0.04); border: 1px solid var(--bd); padding: 2px 8px;">LINUX</span>
-      <span class="badge" style="background: rgba(255,255,255,0.04); border: 1px solid var(--bd); padding: 2px 8px;">MAC</span>
-      <span class="badge" style="background: rgba(255,255,255,0.04); border: 1px solid var(--bd); padding: 2px 8px;">WIN</span>
-    </div>
-  </div>
-
-  <!-- Floating Minecraft assets -->
-  <img src="./assets/diamond.png" onerror="this.src='https://minecraft.wiki/images/Diamond_JE3_BE3.png'" alt="Diamond"
-    class="floating-png float-fast"
-    style="position: absolute; top: 22%; left: 8%; width: 56px; opacity: 0.5;">
-  <img src="./assets/ender_pearl.png" onerror="this.src='https://minecraft.wiki/images/Ender_Pearl_JE3_BE2.png'" alt="Ender Pearl"
-    class="floating-png float-reverse"
-    style="position: absolute; top: 28%; right: 12%; width: 48px; opacity: 0.6;">
-</section>
-
-<!-- ══ STATS ═════════════════════════════════════════════════════════ -->
-<section id="community" style="padding: 80px 0; border-top: 1px solid var(--bd); border-bottom: 1px solid var(--bd); background: rgba(0,0,0,0.3);">
-  <div class="container">
-    <div class="grid-2">
-      <div class="card reveal" style="text-align: center; border-color: rgba(0,255,136,0.2);">
-        <div class="clabel" style="justify-content: center;">Total Downloads</div>
-        <div class="stat-num" id="dl-counter" data-target="1.4">0.0<span>M+</span></div>
-        <div class="glow-line"></div>
-        <p style="color: var(--tx2); font-family: var(--mono); font-size: 12px; line-height: 1.8; margin-top: 20px;">
-          Join the massive community powering their networks with LOCALM's robust infrastructure.
-        </p>
-      </div>
-
-      <div class="card reveal delay-1" style="text-align: center;">
-        <div class="clabel" style="justify-content: center;">Trusted Creators</div>
-        <div class="stat-num" id="creator-counter" data-target="100">0<span>+</span></div>
-        <div class="glow-line"></div>
-        <p style="color: var(--tx2); font-family: var(--mono); font-size: 12px; line-height: 1.8; margin-top: 20px;">
-          The go-to choice for YouTubers demanding rock-solid stability during live community events.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ FABRIC SECTION ════════════════════════════════════════════════ -->
-<section>
-  <div class="container grid-2" style="align-items: center; gap: 64px;">
-    <div class="reveal">
-      <div class="clabel"><span class="material-symbols-rounded" style="font-size: 14px;">category</span> Built for Modding</div>
-      <h2 class="section-title">Seamless Fabric<br><em>Integration.</em></h2>
-      <p style="color: var(--tx2); font-family: var(--mono); font-size: 13px; line-height: 1.9; margin-bottom: 32px;">
-        Running heavy modpacks? LOCALM is designed to handle it natively.
-        Integrate directly into your workflow without touching router settings.
-      </p>
-      <ul class="checklist" style="margin-bottom: 32px;">
-        <li>
-          <span class="material-symbols-rounded">devices</span>
-          Native support for Linux, Windows &amp; macOS
-        </li>
-        <li>
-          <span class="material-symbols-rounded">check_circle</span>
-          Drop-in Fabric Mod Support
-        </li>
-        <li>
-          <span class="material-symbols-rounded">check_circle</span>
-          Automatic Port Management
-        </li>
-      </ul>
-      <button class="btn btn-g" style="padding: 14px 28px;" onclick="window.open('https://github.com/LocalMiner/LOCALM-Fabric-Mod/releases/latest')">
-        <span class="material-symbols-rounded" style="z-index: 2; font-size: 18px;">extension</span>
-        <span>Get the Mod</span>
-      </button>
-    </div>
-
-    <div style="position: relative; height: 400px;" class="flex-center reveal delay-1">
-      <img src="./assets/guardian.png" onerror="this.src='https://creeper.host/assets/images/creeper-head.png'" alt="Guardian"
-        class="floating-png float-slow" style="width: 240px; z-index: 2;">
-      <img src="./assets/bee.png" onerror="this.src='https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png'" alt="Bee"
-        class="floating-png float-medium"
-        style="position: absolute; bottom: 20px; left: 40px; width: 140px; opacity: 0.7; filter: blur(1px) drop-shadow(0 10px 20px rgba(0,0,0,0.9));">
-      <img src="./assets/pickaxe.png" onerror="this.src='https://minecraft.wiki/images/Diamond_Pickaxe_JE3_BE3.png'" alt="Pickaxe"
-        class="floating-png float-fast"
-        style="position: absolute; top: -20px; right: 20px; width: 100px; transform: rotate(15deg); z-index: 1;">
-    </div>
-  </div>
-</section>
-
-<!-- ══ FEATURES ══════════════════════════════════════════════════════ -->
-<section id="features" style="padding-top: 0;">
-  <div class="container">
-    <div class="clabel reveal" style="justify-content: center; margin-bottom: 56px; font-size: 12px;">
-      <span class="material-symbols-rounded" style="font-size: 14px;">tune</span> Core Architecture
-    </div>
-
-    <div class="grid-3">
-      <div class="card reveal">
-        <div class="feature-icon">
-          <span class="material-symbols-rounded" style="font-size: 26px; color: var(--tx2);">speed</span>
+    <!-- Hero -->
+    <section class="pt-40 pb-24 px-6">
+        <div class="max-w-7xl mx-auto text-center md:text-left">
+            <div class="max-w-3xl">
+                <div class="mb-5">
+                    <span class="badge-minimal">Platform V2.0 Active</span>
+                </div>
+                <h1 class="font-display text-5xl md:text-7xl font-extrabold leading-[1.1] tracking-tighter mb-8">
+                    Host Your Reality.<br><span class="text-secondary">Directly from your PC.</span>
+                </h1>
+                <p class="text-lg text-gray-500 max-w-xl leading-relaxed mb-10">
+                    The professional standard for Minecraft networking. Zero ping, complete file access, and secure E2E tunneling for your community.
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center md:justify-start">
+                    <button onclick="document.getElementById('download').scrollIntoView()" class="btn-primary text-base px-8 py-4">Download Client</button>
+                    <button class="btn-secondary text-base px-8 py-4 flex items-center gap-2">
+                        <i data-lucide="play-circle" class="w-5 h-5"></i>
+                        Quick Demo
+                    </button>
+                </div>
+            </div>
         </div>
-        <h3 style="font-family: var(--display); font-size: 18px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em;">Ultra-Less Ping</h3>
-        <p style="color: var(--tx2); font-family: var(--mono); font-size: 12px; line-height: 1.9;">
-          Optimized routing protocols ensure your packets take the fastest path. Say goodbye to block-lag.
-        </p>
-        <div class="terminal-line" style="margin-top: 20px;">latency optimized</div>
-      </div>
+    </section>
 
-      <div class="card reveal delay-1">
-        <div class="feature-icon">
-          <span class="material-symbols-rounded" style="font-size: 26px; color: var(--green);">shield</span>
+    <!-- Stats -->
+    <section id="stats" class="py-16 border-y border-gray-100 bg-white">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div class="text-center md:text-left">
+                    <div class="text-4xl font-display font-bold mb-1">1.4M+</div>
+                    <div class="text-gray-400 font-mono text-[10px] uppercase tracking-widest font-bold">Total Downloads</div>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="text-4xl font-display font-bold mb-1">0ms</div>
+                    <div class="text-gray-400 font-mono text-[10px] uppercase tracking-widest font-bold">Network Latency</div>
+                </div>
+                <div class="text-center md:text-left">
+                    <div class="text-4xl font-display font-bold mb-1">100+</div>
+                    <div class="text-gray-400 font-mono text-[10px] uppercase tracking-widest font-bold">Elite Creators</div>
+                </div>
+            </div>
         </div>
-        <h3 style="font-family: var(--display); font-size: 18px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em;">Security Focused</h3>
-        <p style="color: var(--tx2); font-family: var(--mono); font-size: 12px; line-height: 1.9;">
-          Enterprise-grade mitigation and encrypted tunneling built right in. Your real IP stays hidden.
-        </p>
-        <div class="terminal-line" style="margin-top: 20px;">ip masking active</div>
-      </div>
+    </section>
 
-      <div class="card reveal delay-2">
-        <div class="feature-icon">
-          <span class="material-symbols-rounded" style="font-size: 26px; color: var(--tx2);">devices</span>
+    <!-- Technology -->
+    <section id="how-it-works" class="py-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-16 text-center md:text-left">
+                <h2 class="font-display text-4xl font-bold tracking-tight mb-3">Core Technology.</h2>
+                <p class="text-gray-500">Built for scale, speed, and absolute privacy.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-8">
+                    <div class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="shield-check" class="text-black w-5 h-5"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3">E2E Encryption</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">AES-256 GCM encrypted tunneling. Your private data remains private.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="zap" class="text-black w-5 h-5"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3">P2P Routing</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Direct connection between players. No centralized bottleneck.</p>
+                </div>
+                <div class="card p-8">
+                    <div class="w-10 h-10 bg-gray-50 rounded-lg flex items-center justify-center mb-6">
+                        <i data-lucide="layout" class="text-black w-5 h-5"></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-3">File Sovereignty</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Full access to your server files. No clunky web dashboards required.</p>
+                </div>
+            </div>
         </div>
-        <h3 style="font-family: var(--display); font-size: 18px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.02em;">Cross-Platform</h3>
-        <p style="color: var(--tx2); font-family: var(--mono); font-size: 12px; line-height: 1.9;">
-          Host from your Windows rig, let friends join seamlessly from their Android devices.
-        </p>
-        <div class="terminal-line" style="margin-top: 20px;">all platforms ready</div>
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
-<!-- ══ FOOTER ════════════════════════════════════════════════════════ -->
-<footer style="border-top: 1px solid var(--bd); padding: 40px 0; position: relative; z-index: 10; background: rgba(0,0,0,0.5);">
-  <div class="container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-    <div class="logo" style="font-size: 18px;">LOCAL<em>M</em><span>_</span></div>
-    <div style="font-family: var(--mono); font-size: 11px; color: var(--tx3);">
-      Authors @healer-op , @trazhub
-    </div>
-    <div style="display: flex; gap: 24px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;">
-      <a href="#" style="color: var(--tx3); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--green)'" onmouseout="this.style.color='var(--tx3)'">TERMS</a>
-      <a href="#" style="color: var(--tx3); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--green)'" onmouseout="this.style.color='var(--tx3)'">PRIVACY</a>
-      <a href="#" style="color: var(--tx3); text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='var(--green)'" onmouseout="this.style.color='var(--tx3)'">DISCORD</a>
-    </div>
-  </div>
-</footer>
+    <!-- Comparison -->
+    <section id="comparison" class="py-24 bg-gray-50">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="font-display text-4xl font-bold text-center mb-16 tracking-tight">The Reality Check.</h2>
+            <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                <div class="grid grid-cols-3 border-b border-gray-50 font-mono text-[9px] font-bold uppercase tracking-widest text-gray-400">
+                    <div class="p-5">Metric</div>
+                    <div class="p-5">Free Hosts</div>
+                    <div class="p-5 text-black">LOCALM</div>
+                </div>
+                <div class="grid grid-cols-3 border-b border-gray-50 items-center text-sm">
+                    <div class="p-5 font-semibold">Deployment</div>
+                    <div class="p-5 text-red-500">Wait in Queue</div>
+                    <div class="p-5 text-secondary font-bold">Instant Start</div>
+                </div>
+                <div class="grid grid-cols-3 border-b border-gray-50 items-center text-sm">
+                    <div class="p-5 font-semibold">Hardware</div>
+                    <div class="p-5 text-gray-500">Shared / Limited RAM</div>
+                    <div class="p-5 text-black font-bold">Your Full PC Power</div>
+                </div>
+                <div class="grid grid-cols-3 border-b border-gray-50 items-center text-sm">
+                    <div class="p-5 font-semibold">Files Access</div>
+                    <div class="p-5 text-gray-500">Web Dashboard Only</div>
+                    <div class="p-5 text-black font-bold">Direct Local Access</div>
+                </div>
+                <div class="grid grid-cols-3 border-b border-gray-50 items-center text-sm">
+                    <div class="p-5 font-semibold">Modpacks</div>
+                    <div class="p-5 text-gray-500">Limited Support</div>
+                    <div class="p-5 text-black font-bold">Infinite Mods</div>
+                </div>
+                <div class="grid grid-cols-3 border-b border-gray-50 items-center text-sm">
+                    <div class="p-5 font-semibold">Uptime</div>
+                    <div class="p-5 text-gray-500">Auto-Sleep (5 mins)</div>
+                    <div class="p-5 text-secondary font-bold">24/7 (Always Active)</div>
+                </div>
+                <div class="grid grid-cols-3 items-center text-sm">
+                    <div class="p-5 font-semibold">Security</div>
+                    <div class="p-5 text-gray-500">Public IP Exposed</div>
+                    <div class="p-5 text-black font-bold">E2E Masked IP</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+    <!-- Advanced Features -->
+    <section id="features" class="py-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-4xl font-bold tracking-tight">Built for Power.</h2>
+                <p class="text-gray-500 mt-3">The technical edge you need to stay ahead.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-8 border border-gray-100 rounded-2xl">
+                    <div class="text-secondary font-mono text-[10px] font-bold mb-4 uppercase tracking-widest">// 01 Protocols</div>
+                    <h4 class="text-lg font-bold mb-2">UDP Acceleration</h4>
+                    <p class="text-gray-500 text-xs leading-relaxed">Proprietary protocols designed specifically for Minecraft's packet structure.</p>
+                </div>
+                <div class="p-8 border border-gray-100 rounded-2xl">
+                    <div class="text-secondary font-mono text-[10px] font-bold mb-4 uppercase tracking-widest">// 02 Security</div>
+                    <h4 class="text-lg font-bold mb-2">Anti-DDoS Mesh</h4>
+                    <p class="text-gray-500 text-xs leading-relaxed">Global node distribution to mitigate attacks before they reach your IP.</p>
+                </div>
+                <div class="p-8 border border-gray-100 rounded-2xl">
+                    <div class="text-secondary font-mono text-[10px] font-bold mb-4 uppercase tracking-widest">// 03 UX</div>
+                    <h4 class="text-lg font-bold mb-2">Auto-Discovery</h4>
+                    <p class="text-gray-500 text-xs leading-relaxed">Friends on your network see the server automatically. No IP typing needed.</p>
+                </div>
+                <div class="p-8 border border-gray-100 rounded-2xl">
+                    <div class="text-secondary font-mono text-[10px] font-bold mb-4 uppercase tracking-widest">// 04 Dev</div>
+                    <h4 class="text-lg font-bold mb-2">API Integration</h4>
+                    <p class="text-gray-500 text-xs leading-relaxed">Expose your local server to webhooks and external monitoring tools.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script>
-/* ══════════════════════════════════════════════════════════════════════
-   UI INTERACTION & ANIMATIONS
-══════════════════════════════════════════════════════════════════════ */
+    <!-- Creators Marquee -->
+    <section id="creators" class="py-24 bg-gray-50/50 border-y border-gray-100">
+        <div class="text-center mb-16">
+            <h2 class="font-display text-4xl font-bold tracking-tight">Trusted Creators.</h2>
+            <p class="text-gray-500 mt-2">Powering the biggest community events.</p>
+        </div>
+        
+        <div class="marquee-container">
+            <div class="marquee-content" id="marquee-1">
+                <!-- Dynamically populated via script -->
+                <div class="p-20 text-center w-full text-gray-400 font-mono text-xs">LOADING CREATORS...</div>
+            </div>
+        </div>
+    </section>
 
-// 1. Scroll Reveal
-const revealElements = document.querySelectorAll('.reveal');
-const revealObserver = new IntersectionObserver((entries, observer) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('active');
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-revealElements.forEach(el => revealObserver.observe(el));
+    <!-- Use Cases -->
+    <section class="py-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="font-display text-4xl font-bold tracking-tight mb-6">Designed for Every Playstyle.</h2>
+                    <div class="space-y-8">
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 bg-black text-white rounded-xl flex-shrink-0 flex items-center justify-center font-display font-bold">1</div>
+                            <div>
+                                <h4 class="font-bold mb-2">Private SMPs</h4>
+                                <p class="text-gray-500 text-sm">Host a long-term survival world for your friends with 24/7 uptime on your spare PC.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 bg-black text-white rounded-xl flex-shrink-0 flex items-center justify-center font-display font-bold">2</div>
+                            <div>
+                                <h4 class="font-bold mb-2">Modpack Testing</h4>
+                                <p class="text-gray-500 text-sm">Testing heavy packs like RLcraft or ATM9? Use your full system RAM without paying for premium tiers.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-6">
+                            <div class="w-12 h-12 bg-black text-white rounded-xl flex-shrink-0 flex items-center justify-center font-display font-bold">3</div>
+                            <div>
+                                <h4 class="font-bold mb-2">Event Hosting</h4>
+                                <p class="text-gray-500 text-sm">Organize community tournaments with zero block-lag and instant player joins.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-[2.5rem] p-12 aspect-square flex items-center justify-center relative overflow-hidden">
+                    <div class="text-center">
+                        <div class="text-8xl font-display font-bold text-black/5 absolute inset-0 flex items-center justify-center -rotate-12 pointer-events-none">USE CASES</div>
+                        <i data-lucide="blocks" class="w-32 h-32 text-secondary mb-8 mx-auto"></i>
+                        <h3 class="font-display text-3xl font-bold">Infinite Potential.</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-// 2. Navbar Scroll
-window.addEventListener('scroll', () => {
-  const nav = document.getElementById('navbar');
-  if (window.scrollY > 50) nav.classList.add('scrolled');
-  else nav.classList.remove('scrolled');
-});
+    <!-- Core Team -->
+    <section id="team" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="mb-16">
+                <h2 class="font-display text-4xl font-bold tracking-tight">The Architects.</h2>
+                <p class="text-gray-500 mt-3">The minds behind the new standard of Minecraft networking.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <a href="https://discord.com/users/883174353204838490" target="_blank" class="group block rounded-[24px] overflow-hidden border border-white/10 bg-black/100 color-black backdrop-blur-sm hover:border-secondary hover:-translate-y-2 transition-all duration-300">
+                    <img src="https://lanyard.cnrad.dev/api/883174353204838490?borderRadius=20px&idleMessage=Probably%20Coding...&bg=https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=600" 
+                         alt="Healer-OP Presence" 
+                         class="w-full">
+                </a>
+                <a href="https://discord.com/users/835584835443228702" class="group block rounded-[24px] overflow-hidden border border-white/10 bg-black/90 backdrop-blur-sm hover:border-secondary hover:-translate-y-2 transition-all duration-300">
+                    <img src="https://lanyard.cnrad.dev/api/835584835443228702?borderRadius=20px&idleMessage=Building%20Worlds...&bg=https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=600" 
+                         alt="Trazhub Presence" 
+                         class="w-full">
+                </a>
+            </div>
+        </div>
+    </section>
 
-// 3. Counter Animation
-function animateValue(obj, start, end, duration, isDecimal) {
-  let startTimestamp = null;
-  const step = (timestamp) => {
-    if (!startTimestamp) startTimestamp = timestamp;
-    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 4);
-    const current = ease * (end - start) + start;
-    obj.innerHTML = isDecimal
-      ? current.toFixed(1) + '<span>M+</span>'
-      : Math.floor(current) + '<span>+</span>';
-    if (progress < 1) window.requestAnimationFrame(step);
-  };
-  window.requestAnimationFrame(step);
-}
+    <!-- Download -->
+    <section id="download" class="py-24">
+        <div class="max-w-5xl mx-auto px-6">
+            <div class="bg-black rounded-[2.5rem] p-16 text-center text-white relative overflow-hidden">
+                <div class="relative z-10">
+                    <h2 class="font-display text-4xl md:text-5xl font-bold mb-6 tracking-tighter">Ready to take control?</h2>
+                    <p class="text-gray-400 text-base mb-10 max-w-lg mx-auto">Download the client or the universal Fabric mod to start hosting today.</p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button onclick="window.open('https://github.com/LocalMiner/LOCALMP/releases/latest')" class="bg-white text-black px-8 py-4 rounded-xl font-bold text-base hover:bg-secondary transition-colors">Windows Client</button>
+                        <button onclick="window.open('https://github.com/LocalMiner/LOCALM-Fabric-Mod/releases/latest')" class="bg-white/10 text-white px-8 py-4 rounded-xl font-bold text-base hover:bg-white/20 transition-all">Fabric Mod</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-const statsSection = document.getElementById('community');
-let countersTriggered = false;
-const statsObserver = new IntersectionObserver((entries) => {
-  if (entries[0].isIntersecting && !countersTriggered) {
-    countersTriggered = true;
-    const dlCount = document.getElementById('dl-counter');
-    const crCount = document.getElementById('creator-counter');
-    animateValue(dlCount, 0, parseFloat(dlCount.getAttribute('data-target')), 2500, true);
-    animateValue(crCount, 0, parseInt(crCount.getAttribute('data-target')), 2500, false);
-  }
-}, { threshold: 0.5 });
-statsObserver.observe(statsSection);
+    <!-- Footer -->
+    <footer class="py-16 border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="flex items-center gap-2">
+                <div class="w-6 h-6 bg-black rounded flex items-center justify-center">
+                    <span class="text-secondary font-bold text-sm font-display">L</span>
+                </div>
+                <span class="font-display font-bold">LOCALM</span>
+            </div>
+            <div class="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                <a href="#" class="hover:text-black">Twitter</a>
+                <a href="#" class="hover:text-black">Discord</a>
+                <a href="#" class="hover:text-black">GitHub</a>
+            </div>
+            <p class="text-[9px] font-mono text-gray-400 uppercase tracking-widest">&copy; 2026 Crafted by <a href="https://discord.com/users/883174353204838490" class="hover:text-black transition-colors">@Healer-OP</a> & <a href="https://discord.com/users/835584835443228702" class="hover:text-black transition-colors">@Trazhub</a></p>
+        </div>
+    </footer>
 
-/* ══════════════════════════════════════════════════════════════════════
-   THREE.JS 3D BACKGROUND — green wireframe cubes
-══════════════════════════════════════════════════════════════════════ */
-const canvas = document.querySelector('#bg-canvas');
-const scene  = new THREE.Scene();
+    <script>
+        lucide.createIcons();
 
-scene.fog = new THREE.FogExp2(0x0a0a0a, 0.045);
+        // YouTuber Handles
+        const creatorHandles = [
+            "YesSmartyPie", "SamayRainaOfficial", "theRachitroo", 
+            "FukraInsaan", "liveinsaan", "MrRandomUniverse", "tanmaybhat"
+        ];
 
-const camera   = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        const marquee = document.getElementById('marquee-1');
 
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(30);
+        function formatSubs(count) {
+            if (!count) return "1M+";
+            const num = parseInt(count);
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M+';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K+';
+            return num;
+        }
 
-const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5);
-const edges    = new THREE.EdgesGeometry(geometry);
-const cubes    = [];
-const cubeCount = 50;
+        async function fetchCreatorData(handle) {
+            try {
+                // Use handle type to get metadata
+                const response = await fetch(`https://www.banner.yt/api/channel/${handle}?type=handle`);
+                const data = await response.json();
+                return {
+                    name: data.name,
+                    handle: handle,
+                    subs: formatSubs(data.subscribers),
+                    banner: (data.banners.default).replace("localhost:3000","banner.yt"),
+                    avatar: 'https://unavatar.io/youtube/' + handle
+                };
+            } catch (error) {
+                console.error(`Error fetching ${handle}:`, error);
+                return null;
+            }
+        }
 
-for (let i = 0; i < cubeCount; i++) {
-  const lineMat  = new THREE.LineBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.12 });
-  const solidMat = new THREE.MeshBasicMaterial({ color: 0x111111, transparent: true, opacity: 0.55 });
-  const wireframe = new THREE.LineSegments(edges, lineMat);
-  const solid     = new THREE.Mesh(geometry, solidMat);
-  const group     = new THREE.Group();
-  group.add(wireframe);
-  group.add(solid);
-  group.position.x = THREE.MathUtils.randFloatSpread(100);
-  group.position.y = THREE.MathUtils.randFloatSpread(100);
-  group.position.z = THREE.MathUtils.randFloatSpread(80);
-  group.userData   = {
-    rotX:  Math.random() * 0.005,
-    rotY:  Math.random() * 0.005,
-    moveY: (Math.random() - 0.5) * 0.015
-  };
-  scene.add(group);
-  cubes.push(group);
-}
+        async function initMarquee() {
+            // Fetch all creators in parallel
+            const creatorsData = await Promise.all(creatorHandles.map(handle => fetchCreatorData(handle)));
+            const validCreators = creatorsData.filter(c => c !== null);
+            
+            if (validCreators.length === 0) {
+                marquee.innerHTML = '<div class="p-20 text-center w-full text-red-400 font-mono text-xs">FAILED TO LOAD CREATORS</div>';
+                return;
+            }
 
-function animate() {
-  requestAnimationFrame(animate);
-  cubes.forEach(cube => {
-    cube.rotation.x += cube.userData.rotX;
-    cube.rotation.y += cube.userData.rotY;
-    cube.position.y += cube.userData.moveY;
-    if (cube.position.y >  50) cube.position.y = -50;
-    if (cube.position.y < -50) cube.position.y =  50;
-  });
-  scene.rotation.y += 0.0004;
-  renderer.render(scene, camera);
-}
-animate();
+            // Duplicate for infinite scroll
+            const displayList = [...validCreators, ...validCreators, ...validCreators];
+            
+            marquee.innerHTML = ''; 
+            displayList.forEach(c => {
+                marquee.innerHTML += `
+                    <div class="creator-card group">
+                        <div class="creator-banner" style="background-image: url('${c.banner}')"></div>
+                        <img src="${c.avatar}" 
+                             alt="${c.name}" 
+                             class="creator-avatar"
+                             onerror="this.src='https://ui-avatars.com/api/?name=${c.name}&background=eee&color=000&size=128'">
+                        <div class="p-5 pt-2">
+                            <h4 class="text-base font-bold text-gray-900 mb-1 truncate">${c.name}</h4>
+                            <div class="flex items-center gap-2 mb-4">
+                                <i data-lucide="youtube" class="w-3 h-3 text-red-500"></i>
+                                <span class="text-[9px] font-bold text-gray-400 uppercase tracking-widest">${c.subs}</span>
+                            </div>
+                            <a href="https://www.youtube.com/@${c.handle}" target="_blank" class="block text-center py-2 border border-gray-100 rounded-lg text-[9px] font-bold uppercase tracking-widest group-hover:bg-black group-hover:text-white transition-all">View Channel</a>
+                        </div>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
 
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
+        initMarquee();
 
-document.addEventListener('mousemove', (e) => {
-  const mouseX = (e.clientX / window.innerWidth)  * 2 - 1;
-  const mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-  camera.position.x += (mouseX * 3 - camera.position.x) * 0.04;
-  camera.position.y += (mouseY * 3 - camera.position.y) * 0.04;
-  camera.lookAt(scene.position);
-});
-</script>
+        // Simple Tab Visibility
+        const originalTitle = document.title;
+        const originalFavicon = document.getElementById('favicon').href;
+        const awayTitles = ["Hey! Come Back!", "Don't Leave LOCALM"];
+        const awayFavicon = ["./assets/shock.png","./assets/worried.png"];
+        let titleInterval;
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                let i = 0;
+                titleInterval = setInterval(() => {
+                    document.title = awayTitles[i % awayTitles.length];
+                    document.getElementById('favicon').href = awayFavicon[i % awayFavicon.length];
+                    i++;
+                }, 2000);
+            } else {
+                clearInterval(titleInterval);
+                document.title = originalTitle;
+                document.getElementById('favicon').href = originalFavicon;
+            }
+        });
+
+        // Reveal Animations
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.from(".card", {
+            scrollTrigger: { trigger: "#how-it-works", start: "top 85%" },
+            y: 30, opacity: 0, stagger: 0.1, duration: 0.8, ease: "power3.out"
+        });
+    </script>
 </body>
 </html>
