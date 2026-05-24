@@ -4,11 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Google Fonts — Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-
     <title>LocalM — Self-host Minecraft, Instantly</title>
     <meta name="description" content="Self-host a Minecraft server on your PC and share it with friends globally. No port-forwarding. No VPNs. No router config. Just LocalM.">
 
@@ -16,8 +11,19 @@
     <meta property="og:title" content="LocalM — Self-host Minecraft, Instantly">
     <meta property="og:description" content="Host a Minecraft server on your own PC and play with friends worldwide. No tech knowledge required.">
     <meta property="og:type" content="website">
-    <script type="module" crossorigin src="/assets/index-DLKfUmNr.js"></script>
+
+    <!-- Preload critical assets -->
+    <link rel="preload" href="/assets/index-DSCz8xJ7.css" as="style">
+    <link rel="preload" href="/assets/index-DLKfUmNr.js" as="script" crossorigin>
+
+    <!-- Google Fonts — async to avoid render blocking -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap"></noscript>
+
     <link rel="stylesheet" crossorigin href="/assets/index-DSCz8xJ7.css">
+    <script type="module" crossorigin src="/assets/index-DLKfUmNr.js"></script>
   </head>
   <body>
     <div id="root"></div>
